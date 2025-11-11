@@ -1,0 +1,28 @@
+# Cppcheck configuration for C++ Mastery
+
+# Enable all checks
+enable=all
+
+# Suppress specific warnings
+suppress=missingInclude
+suppress=unmatchedSuppression
+suppress=unusedFunction:*/tests/*
+
+# C++ standard
+std=c++20
+
+# Include paths
+-Iinclude
+-I.
+
+# Platform
+platform=unix64
+
+# Max configurations to check
+max-configs=20
+
+# Inline suppression
+inline-suppr
+
+# Check level
+check-level=exhaustive

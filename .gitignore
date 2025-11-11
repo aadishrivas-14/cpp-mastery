@@ -1,76 +1,124 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+
 # Compiled Object files
 *.o
 *.obj
+*.ko
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+*.la
+*.lo
 
 # Executables
 *.exe
 *.out
 *.app
-a.out
-
-# Libraries
-*.lib
-*.a
-*.so
-*.dylib
-*.dll
-
-# CMake
-build/
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
-*.cmake
-
-# IDE files
-.vscode/
-.vs/
-*.vcxproj*
-*.sln
-*.suo
-*.user
-.idea/
-*.cbp
+*.i*86
+*.x86_64
+*.hex
 
 # Debug files
 *.dSYM/
+*.su
+*.idb
 *.pdb
-*.ilk
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
+coverage-html/
+*.lcov
+coverage.info
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Ninja
+.ninja_deps
+.ninja_log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Clang tools
+.clangd/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Docker
+.docker/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
 
 # Temporary files
 *.tmp
 *.temp
-*~
-.DS_Store
+*.bak
+*.backup
+
+# OS files
 Thumbs.db
+.DS_Store
 
-# Progress tracking (keep local)
-progress_state.json
+# Test results
+test_results/
+*.xml
 
-# Build artifacts
-bin/
-obj/
-Debug/
-Release/
-x64/
+# Benchmarks
+benchmark_results/
+
+# Documentation build
+docs/_build/
+docs/html/
+docs/latex/
+
+# Package managers
+conan/
+vcpkg_installed/
 
 # Profiling
 *.prof
-gmon.out
 perf.data*
-
-# Coverage
-*.gcov
-*.gcda
-*.gcno
-coverage/
-
-# Valgrind
-vgcore.*
-*.memcheck
-
-# Backup files
-*.bak
-*.backup
-*.orig
+callgrind.out.*

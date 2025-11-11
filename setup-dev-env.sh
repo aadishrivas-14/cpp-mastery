@@ -1,5 +1,5 @@
 #!/bin/bash
-# C++ Mastery Development Environment Setup
+# C++ Mastery TDD Development Environment Setup
 
 set -e
 
@@ -19,15 +19,38 @@ fi
 
 # Create necessary directories
 echo "📁 Creating project structure..."
-mkdir -p {week-1,week-2,week-3,week-4}/{src,include,tests,benchmarks}
 mkdir -p database/init
 mkdir -p build
 mkdir -p coverage-html
 
+# Verify project structure
+echo "✅ Verifying project structure..."
+WEEK1_PROJECTS=("calculator" "banking" "smart_pointers" "memory_pool")
+WEEK2_PROJECTS=("stl_benchmark" "generic_container" "expression_template" "bst_iterator" "graph_visualizer")
+WEEK3_PROJECTS=("thread_pool" "lockfree_structures" "modern_cpp" "design_patterns" "hpc_library" "trading_engine")
+WEEK4_PROJECTS=("http_server" "database_orm" "distributed_cache" "microservices" "realtime_comm" "monitoring")
+
+for week in 1 2 3 4; do
+    if [ ! -d "week-$week" ]; then
+        echo "❌ Missing week-$week directory"
+        exit 1
+    fi
+    
+    eval "projects=(\"\${WEEK${week}_PROJECTS[@]}\")"
+    for project in "${projects[@]}"; do
+        if [ ! -d "week-$week/$project" ]; then
+            echo "⚠️  Missing week-$week/$project directory"
+        fi
+    done
+done
+
 # Create database initialization script
+echo "🗄️  Setting up database schema..."
 cat > database/init/01-init.sql << 'EOF'
 -- C++ Mastery Database Schema
 CREATE DATABASE IF NOT EXISTS cpp_mastery;
+
+\c cpp_mastery;
 
 -- Users table for authentication examples
 CREATE TABLE IF NOT EXISTS users (
@@ -58,53 +81,43 @@ CREATE TABLE IF NOT EXISTS test_results (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert sample data
+-- Insert project data for all 21 projects
 INSERT INTO projects (name, week, status) VALUES
+-- Week 1
 ('Calculator', 1, 'not_started'),
 ('Banking System', 1, 'not_started'),
 ('Smart Pointers', 1, 'not_started'),
+('Memory Pool', 1, 'not_started'),
+-- Week 2
 ('STL Benchmark', 2, 'not_started'),
+('Generic Container', 2, 'not_started'),
+('Expression Template', 2, 'not_started'),
+('BST Iterator', 2, 'not_started'),
+('Graph Visualizer', 2, 'not_started'),
+-- Week 3
 ('Thread Pool', 3, 'not_started'),
-('HTTP Server', 4, 'not_started');
+('Lock-Free Structures', 3, 'not_started'),
+('Modern C++', 3, 'not_started'),
+('Design Patterns', 3, 'not_started'),
+('HPC Library', 3, 'not_started'),
+('Trading Engine', 3, 'not_started'),
+-- Week 4
+('HTTP Server', 4, 'not_started'),
+('Database ORM', 4, 'not_started'),
+('Distributed Cache', 4, 'not_started'),
+('Microservices', 4, 'not_started'),
+('Real-time Communication', 4, 'not_started'),
+('Monitoring System', 4, 'not_started');
 EOF
 
-# Create example test configuration
-cat > .clang-tidy << 'EOF'
-Checks: >
-  *,
-  -abseil-*,
-  -altera-*,
-  -android-*,
-  -fuchsia-*,
-  -google-*,
-  -llvm-*,
-  -zircon-*,
-  -readability-magic-numbers,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -modernize-use-trailing-return-type
-WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
-FormatStyle: none
-EOF
-
-# Create pre-commit configuration
-cat > .pre-commit-config.yaml << 'EOF'
-repos:
-  - repo: local
-    hooks:
-      - id: cpp-tests
-        name: C++ Tests
-        entry: docker-compose run --rm test-runner
-        language: system
-        files: \.(cpp|h|hpp)$
-        pass_filenames: false
-      - id: clang-format
-        name: clang-format
-        entry: clang-format
-        language: system
-        files: \.(cpp|h|hpp)$
-        args: ['-i']
-EOF
+# Install pre-commit hooks
+echo "🔧 Setting up pre-commit hooks..."
+if command -v pre-commit &> /dev/null; then
+    pre-commit install
+    echo "✅ Pre-commit hooks installed"
+else
+    echo "⚠️  pre-commit not found. Install with: pip install pre-commit"
+fi
 
 # Build the development environment
 echo "🔨 Building development environment..."
@@ -121,14 +134,32 @@ sleep 10
 # Run initial setup
 echo "🔧 Running initial setup..."
 docker-compose run --rm cpp-dev bash -c "
-    echo '✅ C++ Compiler version:' && g++ --version | head -1
-    echo '✅ CMake version:' && cmake --version | head -1
-    echo '✅ Testing framework:' && pkg-config --modversion gtest
-    echo '✅ Database connection:' && pg_isready -h postgres -p 5432
-    echo '✅ Redis connection:' && redis-cli -h redis ping
+    echo '=== Development Environment Info ===' &&
+    echo '✅ C++ Compiler:' && g++ --version | head -1 &&
+    echo '✅ CMake:' && cmake --version | head -1 &&
+    echo '✅ Ninja:' && ninja --version &&
+    echo '✅ clang-format:' && clang-format --version | head -1 &&
+    echo '✅ clang-tidy:' && clang-tidy --version | head -1 &&
+    echo '✅ cppcheck:' && cppcheck --version &&
+    echo '✅ Google Test:' && pkg-config --modversion gtest &&
+    echo '' &&
+    echo '=== Service Status ===' &&
+    echo '✅ PostgreSQL:' && pg_isready -h postgres -p 5432 &&
+    echo '✅ Redis:' && redis-cli -h redis ping
 "
 
+# Initialize progress tracker
+echo "📊 Initializing progress tracker..."
+python3 update_progress.py status
+
+echo ""
 echo "🎉 Development environment setup complete!"
+echo ""
+echo "📋 Project Structure:"
+echo "  Week 1: 4 projects (calculator, banking, smart_pointers, memory_pool)"
+echo "  Week 2: 5 projects (stl_benchmark, generic_container, expression_template, bst_iterator, graph_visualizer)"
+echo "  Week 3: 6 projects (thread_pool, lockfree_structures, modern_cpp, design_patterns, hpc_library, trading_engine)"
+echo "  Week 4: 6 projects (http_server, database_orm, distributed_cache, microservices, realtime_comm, monitoring)"
 echo ""
 echo "📋 Available commands:"
 echo "  docker-compose run --rm cpp-dev                 # Enter development shell"
@@ -140,7 +171,16 @@ echo "🔗 Services:"
 echo "  PostgreSQL: localhost:5432 (user: postgres, pass: password)"
 echo "  Redis: localhost:6379"
 echo ""
+echo "🔧 Code Quality Tools:"
+echo "  clang-format -i file.cpp                        # Format code"
+echo "  clang-tidy file.cpp                             # Lint code"
+echo "  cppcheck --enable=all file.cpp                  # Static analysis"
+echo "  pre-commit run --all-files                      # Run all checks"
+echo ""
 echo "🚀 To start developing:"
 echo "  docker-compose run --rm cpp-dev"
-echo "  cd week-1 && mkdir -p build && cd build"
+echo "  cd week-1/calculator && mkdir -p build && cd build"
 echo "  cmake .. -GNinja && ninja && ctest"
+echo ""
+echo "📖 Read CODING_GUIDELINES.md for code standards"
+echo "📖 Read HOW_TO_WORK.md for TDD workflow"
