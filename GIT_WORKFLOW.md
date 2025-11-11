@@ -1,9 +1,22 @@
 # Git Workflow for C++ Mastery
 
 ## Repository Setup ✅
+**Local Git Config**: Separate from your global Git settings
+- **Name**: C++ Mastery Student  
+- **Email**: cpp.mastery@learner.local
+- **Scope**: Only applies to this repository
+
 ```bash
 cd /home/eshdiar/cpp/cpp-mastery
-git status  # Check current status
+git config user.name    # Shows: C++ Mastery Student
+git config user.email   # Shows: cpp.mastery@learner.local
+```
+
+## Change Local Config (if needed)
+```bash
+cd /home/eshdiar/cpp/cpp-mastery
+git config --local user.name "Your Learning Name"
+git config --local user.email "your.learning@email.com"
 ```
 
 ## Branch Structure

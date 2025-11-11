@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  # Main C++ development environment
+  cpp-dev:
+    build: .
+    container_name: cpp-mastery-dev
+    volumes:
+      - .:/workspace/cpp-mastery
+      - cpp-build-cache:/workspace/.cache
+      - cpp-vcpkg-cache:/opt/vcpkg/downloads
+    working_dir: /workspace/cpp-mastery
+    stdin_open: true
+    tty: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/cpp_mastery
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cpp-network
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:15
+    container_name: cpp-mastery-postgres
+    environment:
+      POSTGRES_DB: cpp_mastery
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - cpp-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: cpp-mastery-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - cpp-network
+
+  # Test runner service
+  test-runner:
+    build: .
+    container_name: cpp-mastery-tests
+    volumes:
+      - .:/workspace/cpp-mastery
+      - cpp-build-cache:/workspace/.cache
+    working_dir: /workspace/cpp-mastery
+    command: >
+      bash -c "
+        mkdir -p build &&
+        cd build &&
+        cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON &&
+        ninja &&
+        ctest --output-on-failure
+      "
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cpp-network
+
+  # Code coverage service
+  coverage:
+    build: .
+    container_name: cpp-mastery-coverage
+    volumes:
+      - .:/workspace/cpp-mastery
+      - cpp-build-cache:/workspace/.cache
+    working_dir: /workspace/cpp-mastery
+    command: >
+      bash -c "
+        mkdir -p build-coverage &&
+        cd build-coverage &&
+        cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON &&
+        ninja &&
+        ctest &&
+        lcov --capture --directory . --output-file coverage.info &&
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info &&
+        lcov --list coverage.info
+      "
+    networks:
+      - cpp-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  cpp-build-cache:
+  cpp-vcpkg-cache:
+
+networks:
+  cpp-network:
+    driver: bridge
