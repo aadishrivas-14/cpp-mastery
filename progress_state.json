@@ -1,0 +1,17 @@
+{
+  "current_week": 1,
+  "current_day": 2,
+  "completed_tasks": [
+    "Day 1 Calculator"
+  ],
+  "completed_theory": [],
+  "completed_projects": [],
+  "scores": {
+    "week1": 0,
+    "week2": 0,
+    "week3": 0,
+    "week4": 0
+  },
+  "last_updated": "2025-11-12T01:28:35.782802",
+  "notes": []
+}
