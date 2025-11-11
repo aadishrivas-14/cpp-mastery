@@ -25,21 +25,15 @@ mkdir -p coverage-html
 
 # Verify project structure
 echo "✅ Verifying project structure..."
-WEEK1_PROJECTS=("calculator" "banking" "smart_pointers" "memory_pool")
-WEEK2_PROJECTS=("stl_benchmark" "generic_container" "expression_template" "bst_iterator" "graph_visualizer")
-WEEK3_PROJECTS=("thread_pool" "lockfree_structures" "modern_cpp" "design_patterns" "hpc_library" "trading_engine")
-WEEK4_PROJECTS=("http_server" "database_orm" "distributed_cache" "microservices" "realtime_comm" "monitoring")
-
 for week in 1 2 3 4; do
     if [ ! -d "week-$week" ]; then
         echo "❌ Missing week-$week directory"
         exit 1
     fi
     
-    eval "projects=(\"\${WEEK${week}_PROJECTS[@]}\")"
-    for project in "${projects[@]}"; do
-        if [ ! -d "week-$week/$project" ]; then
-            echo "⚠️  Missing week-$week/$project directory"
+    for dir in tests src include; do
+        if [ ! -d "week-$week/$dir" ]; then
+            echo "⚠️  Missing week-$week/$dir directory"
         fi
     done
 done
@@ -155,11 +149,12 @@ python3 update_progress.py status
 echo ""
 echo "🎉 Development environment setup complete!"
 echo ""
-echo "📋 Project Structure:"
-echo "  Week 1: 4 projects (calculator, banking, smart_pointers, memory_pool)"
-echo "  Week 2: 5 projects (stl_benchmark, generic_container, expression_template, bst_iterator, graph_visualizer)"
-echo "  Week 3: 6 projects (thread_pool, lockfree_structures, modern_cpp, design_patterns, hpc_library, trading_engine)"
-echo "  Week 4: 6 projects (http_server, database_orm, distributed_cache, microservices, realtime_comm, monitoring)"
+echo "📋 Clean Project Structure:"
+echo "  Each week has: tests/, src/, include/, theory/"
+echo "  Week 1: 5 test files (calculator, expression_parser, banking, smart_pointers, memory_pool)"
+echo "  Week 2: 5 test files (stl_benchmark, generic_container, expression_template, bst_iterator, graph_visualizer)"
+echo "  Week 3: 2 test files (thread_pool, lockfree_structures)"
+echo "  Week 4: 1 test file (http_server)"
 echo ""
 echo "📋 Available commands:"
 echo "  docker-compose run --rm cpp-dev                 # Enter development shell"
@@ -179,7 +174,7 @@ echo "  pre-commit run --all-files                      # Run all checks"
 echo ""
 echo "🚀 To start developing:"
 echo "  docker-compose run --rm cpp-dev"
-echo "  cd week-1/calculator && mkdir -p build && cd build"
+echo "  cd week-1 && mkdir -p build && cd build"
 echo "  cmake .. -GNinja && ninja && ctest"
 echo ""
 echo "📖 Read CODING_GUIDELINES.md for code standards"

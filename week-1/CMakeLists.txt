@@ -1,26 +1,45 @@
 cmake_minimum_required(VERSION 3.20)
-project(week1_projects)
+project(week1_projects CXX)
 
-# Calculator Project
-add_subdirectory(calculator)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Banking System Project  
-add_subdirectory(banking)
+# Fetch Google Test
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
 
-# Smart Pointers Project
-add_subdirectory(smart_pointers)
+# Include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Memory Pool Project
-add_subdirectory(memory_pool)
+# Source files
+set(SOURCES
+  src/calculator.cpp
+  src/expression_parser.cpp
+  src/shape.cpp
+  src/animal.cpp
+  src/bank_account.cpp
+  src/resource.cpp
+  src/memory_pool.cpp
+)
 
-# Collect all test targets
-if(ENABLE_TESTING)
-    add_custom_target(week1-tests
-        DEPENDS 
-            calculator-tests
-            banking-tests
-            smart-pointers-tests
-            memory-pool-tests
-        COMMENT "Running Week 1 tests"
-    )
-endif()
+# Create a library from sources
+add_library(week1_lib ${SOURCES})
+
+# Enable testing
+enable_testing()
+
+# Get all test files
+file(GLOB TEST_SOURCES tests/*.cpp)
+
+# Create executable for each test file
+foreach(TEST_SOURCE ${TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+    add_executable(${TEST_NAME} ${TEST_SOURCE})
+    target_link_libraries(${TEST_NAME} week1_lib gtest_main pthread)
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+endforeach()

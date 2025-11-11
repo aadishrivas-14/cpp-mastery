@@ -1,30 +1,40 @@
 cmake_minimum_required(VERSION 3.20)
-project(week2_projects)
+project(week2_projects CXX)
 
-# STL Benchmark Suite
-add_subdirectory(stl_benchmark)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Generic Container Library
-add_subdirectory(generic_container)
+# Fetch Google Test
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
 
-# Expression Template System
-add_subdirectory(expression_template)
+# Include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# BST with Iterators
-add_subdirectory(bst_iterator)
+# Source files (only non-template implementations)
+set(SOURCES
+  src/graph.cpp
+  src/hash_table_impl.cpp
+)
 
-# Graph Visualizer
-add_subdirectory(graph_visualizer)
+# Create a library from sources
+add_library(week2_lib ${SOURCES})
 
-# Collect all test targets
-if(ENABLE_TESTING)
-    add_custom_target(week2-tests
-        DEPENDS 
-            stl-benchmark-tests
-            generic-container-tests
-            expression-template-tests
-            bst-iterator-tests
-            graph-visualizer-tests
-        COMMENT "Running Week 2 tests"
-    )
-endif()
+# Enable testing
+enable_testing()
+
+# Get all test files
+file(GLOB TEST_SOURCES tests/*.cpp)
+
+# Create executable for each test file
+foreach(TEST_SOURCE ${TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+    add_executable(${TEST_NAME} ${TEST_SOURCE})
+    target_link_libraries(${TEST_NAME} week2_lib gtest_main pthread)
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+endforeach()

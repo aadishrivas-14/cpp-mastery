@@ -1,24 +1,21 @@
 #pragma once
 
+/**
+ * TODO: Implement a Basic Calculator
+ * 
+ * Requirements:
+ * - add(a, b) - Return sum of two numbers
+ * - subtract(a, b) - Return difference
+ * - multiply(a, b) - Return product
+ * - divide(a, b) - Return quotient
+ * 
+ * All methods should be const and take double parameters
+ */
+
 class Calculator {
-public:
-    // Basic arithmetic operations
-    double add(double a, double b) const;
-    double subtract(double a, double b) const;
-    double multiply(double a, double b) const;
-    double divide(double a, double b) const;
-    
-    // Advanced operations
-    double power(double base, double exponent) const;
-    double sqrt(double value) const;
-    long long factorial(int n) const;
-    
-    // Memory functions
-    void memoryStore(double value);
-    double memoryRecall() const;
-    void memoryAdd(double value);
-    void memoryClear();
-    
-private:
-    double memory_ = 0.0;
+ public:
+  double add(double a, double b) const;
+  double subtract(double a, double b) const;
+  double multiply(double a, double b) const;
+  double divide(double a, double b) const;
 };

@@ -1,34 +1,46 @@
 cmake_minimum_required(VERSION 3.20)
-project(week3_projects)
+project(week3_projects CXX)
 
-# Thread Pool
-add_subdirectory(thread_pool)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Lock-Free Structures
-add_subdirectory(lockfree_structures)
+# Fetch Google Test
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
 
-# Modern C++ Features
-add_subdirectory(modern_cpp)
+# Include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Design Patterns
-add_subdirectory(design_patterns)
+# Source files
+set(SOURCES
+  src/thread_pool.cpp
+  src/lockfree_queue.cpp
+  src/modern_features.cpp
+  src/patterns.cpp
+  src/simd_ops.cpp
+  src/algorithms.cpp
+  src/trading_engine.cpp
+)
 
-# HPC Library
-add_subdirectory(hpc_library)
+# Create a library from sources
+add_library(week3_lib ${SOURCES})
+target_link_libraries(week3_lib pthread)
 
-# Trading Engine
-add_subdirectory(trading_engine)
+# Enable testing
+enable_testing()
 
-# Collect all test targets
-if(ENABLE_TESTING)
-    add_custom_target(week3-tests
-        DEPENDS 
-            thread-pool-tests
-            lockfree-tests
-            modern-cpp-tests
-            design-patterns-tests
-            hpc-library-tests
-            trading-engine-tests
-        COMMENT "Running Week 3 tests"
-    )
-endif()
+# Get all test files
+file(GLOB TEST_SOURCES tests/*.cpp)
+
+# Create executable for each test file
+foreach(TEST_SOURCE ${TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+    add_executable(${TEST_NAME} ${TEST_SOURCE})
+    target_link_libraries(${TEST_NAME} week3_lib gtest_main pthread)
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+endforeach()
