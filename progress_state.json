@@ -1,8 +1,9 @@
 {
-  "current_week": 1,
-  "current_day": 2,
+  "current_week": 2,
+  "current_day": 3,
   "completed_tasks": [
-    "Day 1 Calculator"
+    "Day 1 Calculator",
+    "Day 2 Expression Parses"
   ],
   "completed_theory": [],
   "completed_projects": [],
@@ -12,6 +13,6 @@
     "week3": 0,
     "week4": 0
   },
-  "last_updated": "2025-11-12T01:28:35.782802",
+  "last_updated": "2025-11-12T11:53:12.881002",
   "notes": []
 }
